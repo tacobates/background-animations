@@ -1,0 +1,116 @@
+<html>
+
+<!-- JQuery for Animations (UI Version 1.12.1 [Smoothness]) -->
+<link rel="stylesheet" href="js/jquery-1.12/jquery-ui.css">
+<script src="js/jquery-1.12/jquery-1.12.4.js"></script>
+<script src="js/jquery-1.12/jquery-ui.js"></script>
+
+<style>
+html {
+   background-color:#000;
+   color:#eee;
+}
+body { overflow:hidden; }
+
+#hexTable {
+  margin:0px 0px 0px -50px;
+  width:110%;
+}
+
+.hexRow {
+  overflow:hidden;
+  height:82px;
+  width:100%;
+  margin-top:-40px;
+}
+.hexRow:nth-of-type(even) {
+  margin-left:77px;
+}
+div.h {
+  background-image: url('img/hexShading.png');
+  display:inline-block;
+  height:82px;
+  width:100px;
+  margin-right:54px;
+  clip-path: polygon(25% 0, 0 50%, 25% 100%,
+                            75% 100%, 100% 50%, 75% 0);
+}
+</style>
+
+<script type="text/javascript">
+var animationMS = 400; // Time between Animation events
+var animationQuantity = 4; // How many Hexagons to change at one time
+var hexes = null;
+var maxHex = 0;
+
+var colors = colorsPurple();
+
+
+function init() {
+   makeHexagons();
+   setInterval(animateHexagons, animationMS);
+}
+
+function makeHexagons() {
+  var numCols = 19;
+  var numRows = 29;
+  var hexTable = document.getElementById("hexTable");
+  maxHex = numCols * numRows;
+
+  for (var i=0; i<numRows; ++i) {
+    var rowDiv = document.createElement('div');
+    rowDiv.className = "hexRow";
+    for (var j=0; j<numCols; ++j) {
+      var hex = document.createElement('div');
+      hex.className = "h";
+      hex.style.backgroundColor = randomColor();
+      rowDiv.appendChild(hex);
+    }
+    hexTable.appendChild(rowDiv);
+  }
+
+  // Save All Hexagons for Later Animation
+  hexes = document.querySelectorAll(".h");
+  console.log("Expected " + maxHex);
+  console.log();
+}
+
+function animateHexagons() {
+  var durations = [400, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000]; //So animations ebb and flow
+  var d1 = durations[Math.floor(Math.random() * durations.length)];
+  var d2 = durations[Math.floor(Math.random() * durations.length)];
+  // Choose Random Hexagons
+  for (var i=0; i<animationQuantity; ++i) {
+    var j = Math.floor(Math.random() * maxHex);
+
+    // Shift its Color
+    var c = randomColor();
+    //hexes[j].style.backgroundColor = c;
+//    $(hexes[j]).animate({ backgroundColor: c });
+    $(hexes[j]).animate({ backgroundColor: "#000" }, {duration:d1}).animate({ backgroundColor: c }, {duration:d2});
+  }
+}
+
+function randomColor() { return colors[Math.floor(Math.random() * colors.length)]; }
+
+function colorsPurple() {
+  return [ // Dark to Light Purple
+     "#220036","#280040","#2d0047","#32004f","#370057","#3a005c","#3d0061",
+     "#400066","#43006b","#480073","#4d007a"
+  ];
+}
+
+function colorsPurpleNavy() {
+  return [ // Dark to Light Purple
+     "#1c0033","#20003b","#250045","#29004d","#2b0052","#2c0054","#2f0059",
+     "#30005c","#31005e","#330061","#340063","#360066","#370069","#38006b",
+     "#39006e","#3a0070","#3b0073","#3d0078","#3e007a","#3f007d",
+     "#400080","#410082","#420085","#430087","#44008a","#45008c"
+  ];
+}
+</script>
+
+<body onload="init()">
+  <div id="hexTable"></div>
+</body>
+</html>
