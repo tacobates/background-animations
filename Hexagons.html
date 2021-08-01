@@ -1,4 +1,14 @@
+<!DOCTYPE html>
 <html>
+<head><title>F11 for Fullscreen</title></head>
+
+<!-------------------------------------------------------------------
+- Run page in fullscreen
+- Capture with OBS/Nvidia/AMD/etc
+- Use video file as backgrounds for video editing
+- NOTE: Variables set for 1080p Fullscreen
+-            Change ALLCAPS Javascript vars for larger screens
+--------------------------------------------------------------------->
 
 <!-- JQuery for Animations (UI Version 1.12.1 [Smoothness]) -->
 <link rel="stylesheet" href="js/jquery-1.12/jquery-ui.css">
@@ -6,16 +16,15 @@
 <script src="js/jquery-1.12/jquery-ui.js"></script>
 
 <style>
-html {
-   background-color:#000;
-   color:#eee;
+html { background-color:#000; }
+body {
+  margin:-21px 0px 0px -50px;
+  -ms-overflow-style:none;
+  scrollbar-width:none;
 }
-body { overflow:hidden; }
+body::-webkit-scrollbar { display:none; }
 
-#hexTable {
-  margin:0px 0px 0px -50px;
-  width:110%;
-}
+#hexTable { width:120%; }
 
 .hexRow {
   overflow:hidden;
@@ -24,43 +33,44 @@ body { overflow:hidden; }
   margin-top:-40px;
 }
 .hexRow:nth-of-type(even) {
-  margin-left:77px;
+  margin-left:77px; /*Nestle even rows into the crannys of the odd rows*/
 }
-div.h {
-  background-image: url('img/hexShading.png');
+div.h { /*Short classname for Hexagons*/
+  background-image: url('img/hexShading.png'); /*So they don't look flat*/
   display:inline-block;
   height:82px;
   width:100px;
   margin-right:54px;
-  clip-path: polygon(25% 0, 0 50%, 25% 100%,
-                            75% 100%, 100% 50%, 75% 0);
+  /*Clip Div into Hexagon by removing corners*/
+  clip-path: polygon(25% 0, 0 50%, 25% 100%, 75% 100%, 100% 50%, 75% 0);
 }
 </style>
 
 <script type="text/javascript">
-var animationMS = 400; // Time between Animation events
-var animationQuantity = 4; // How many Hexagons to change at one time
-var hexes = null;
-var maxHex = 0;
+var ANIMATION_MS = 400; //Time between Animations
+var ANIMATION_QUANTITY = 4; //How many Hexagons to change at once
+var COLORS = colorsBlue(); //Fetch a pre-defined palette
+var FADE_COLOR = "#111"; //Fade to this color before fading to the new color (null to skip pre-fade)
+var NUM_COLS = 19;
+var NUM_ROWS = 29;
 
-var colors = colorsPurple();
+var hexes = null; //Holds all the Divs we'll create
+var maxHex = 0; //Total Num Divs we created
 
-
+/***** Page Loaded, Create the Divs & Start Animating *****/
 function init() {
    makeHexagons();
-   setInterval(animateHexagons, animationMS);
+   setInterval(animateHexagons, ANIMATION_MS);
 }
 
+/***** Create the Divs *****/
 function makeHexagons() {
-  var numCols = 19;
-  var numRows = 29;
   var hexTable = document.getElementById("hexTable");
-  maxHex = numCols * numRows;
-
-  for (var i=0; i<numRows; ++i) {
+  maxHex = NUM_COLS * NUM_ROWS;
+  for (var i=0; i<NUM_ROWS; ++i) {
     var rowDiv = document.createElement('div');
     rowDiv.className = "hexRow";
-    for (var j=0; j<numCols; ++j) {
+    for (var j=0; j<NUM_COLS; ++j) {
       var hex = document.createElement('div');
       hex.className = "h";
       hex.style.backgroundColor = randomColor();
@@ -68,49 +78,48 @@ function makeHexagons() {
     }
     hexTable.appendChild(rowDiv);
   }
-
   // Save All Hexagons for Later Animation
   hexes = document.querySelectorAll(".h");
-  console.log("Expected " + maxHex);
-  console.log();
+  if (maxHex != hexes.length)
+    console.log("WARNING: Expected " + maxHex + " hexes, but got " + hexes.length);
 }
 
+/***** Choose random Hexes, and Change their Color *****/
 function animateHexagons() {
   var durations = [400, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000]; //So animations ebb and flow
   var d1 = durations[Math.floor(Math.random() * durations.length)];
   var d2 = durations[Math.floor(Math.random() * durations.length)];
   // Choose Random Hexagons
-  for (var i=0; i<animationQuantity; ++i) {
+  for (var i=0; i<ANIMATION_QUANTITY; ++i) {
     var j = Math.floor(Math.random() * maxHex);
-
-    // Shift its Color
     var c = randomColor();
-    //hexes[j].style.backgroundColor = c;
-//    $(hexes[j]).animate({ backgroundColor: c });
-    $(hexes[j]).animate({ backgroundColor: "#000" }, {duration:d1}).animate({ backgroundColor: c }, {duration:d2});
+    if (FADE_COLOR == null) { //No pre-animation, go straight to new color
+      $(hexes[j]).animate({ backgroundColor: c }, {duration:d2});
+    } else { //Pre-Animate to FADE_COLOR before animating to the new color
+      $(hexes[j]).animate({ backgroundColor: FADE_COLOR }, {duration:d1})
+          .animate({ backgroundColor: c }, {duration:d2});
+    }
   }
 }
 
-function randomColor() { return colors[Math.floor(Math.random() * colors.length)]; }
+/***** Gets a random item from the COLORS array *****/
+function randomColor() { return "#" + COLORS[Math.floor(Math.random() * COLORS.length)]; }
 
+/************************* COLOR PALETTES *************************/
+function colorsBlue() {
+  return [
+    "001457","001869","00196e","001b75","001c7a","001d7d","001e82","001f85",
+    "002087","00218a","00228f"
+  ];
+}
 function colorsPurple() {
-  return [ // Dark to Light Purple
-     "#220036","#280040","#2d0047","#32004f","#370057","#3a005c","#3d0061",
-     "#400066","#43006b","#480073","#4d007a"
+  return [
+     "220036","280040","2d0047","32004f","370057","3a005c","3d0061",
+     "400066","43006b","480073","4d007a"
   ];
 }
-
-function colorsPurpleNavy() {
-  return [ // Dark to Light Purple
-     "#1c0033","#20003b","#250045","#29004d","#2b0052","#2c0054","#2f0059",
-     "#30005c","#31005e","#330061","#340063","#360066","#370069","#38006b",
-     "#39006e","#3a0070","#3b0073","#3d0078","#3e007a","#3f007d",
-     "#400080","#410082","#420085","#430087","#44008a","#45008c"
-  ];
-}
+/************************* END OF PALETTES *************************/
 </script>
 
-<body onload="init()">
-  <div id="hexTable"></div>
-</body>
+<body onload="init()"><div id="hexTable"></div></body>
 </html>
