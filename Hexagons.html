@@ -47,10 +47,10 @@ div.h { /*Short classname for Hexagons*/
 </style>
 
 <script type="text/javascript">
-var ANIMATION_MS = 400; //Time between Animations
-var ANIMATION_QUANTITY = 4; //How many Hexagons to change at once
-var COLORS = colorsBlue(); //Fetch a pre-defined palette
-var FADE_COLOR = "#111"; //Fade to this color before fading to the new color (null to skip pre-fade)
+var ANIMATION_MS = 10; //Time between Animations
+var ANIMATION_QUANTITY = 1; //How many Hexagons to change at once
+var COLORS = colorsGrayish();//colorsBlue(); //Fetch a pre-defined palette
+var FADE_COLOR = null;//"#111"; //Fade to this color before fading to the new color (null to skip pre-fade)
 var NUM_COLS = 19;
 var NUM_ROWS = 29;
 
@@ -110,6 +110,15 @@ function colorsBlue() {
   return [
     "001457","001869","00196e","001b75","001c7a","001d7d","001e82","001f85",
     "002087","00218a","00228f"
+  ];
+}
+function colorsGrayish() {
+  return [
+     //"050306","0a050b","0c070d","0e090f","0f0a10"
+     //,"010108","0a0a12" //blues
+     //,"030008" //purples
+     "000","010104","020205","030306","040407","050509","060611","070712","080813",
+     "0b0b12"//,"0d0d17","0e0f17"
   ];
 }
 function colorsPurple() {

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bubble Animation</title>
+  <link rel="stylesheet" href="css/bubbles.css">
+  <script type="text/javascript">
+    const NUM_BUBBLES = 79; //Prime numbers are good at making it feel random
+    function init() {
+      var bubbles = document.createElement('div');
+      bubbles.classList.add('bubbles');
+      for (let i = 0; i < NUM_BUBBLES; ++i) {
+        let div = document.createElement('div');
+        let p = document.createElement('p');
+        let span = document.createElement('span');
+        div.appendChild(span);
+        p.appendChild(div);
+        bubbles.appendChild(p);
+      }
+      document.body.appendChild(bubbles);
+    }
+  </script>
+</head>
+<body onload="init()">
+</body>
+</html>
